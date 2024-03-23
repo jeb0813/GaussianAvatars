@@ -1,5 +1,5 @@
 tqdm
-numpy==1.22.3
+numpy
 matplotlib
 scipy
 chumpy
