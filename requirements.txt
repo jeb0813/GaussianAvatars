@@ -10,7 +10,7 @@ plyfile
 tyro
 dearpygui
 roma
-git+https://github.com/NVlabs/nvdiffrast
+# nvdiffrast@git+git@github.com:NVlabs/nvdiffrast.git
 #git+https://github.com/facebookresearch/pytorch3d.git
 submodules/diff-gaussian-rasterization
 submodules/simple-knn

@@ -18,7 +18,8 @@ from scene.cameras import MiniCam
 class NVDiffRenderer(torch.nn.Module):
     def __init__(
             self,
-            use_opengl: bool = True, 
+            # use_opengl: bool = True, 
+            use_opengl: bool = False, 
             lighting_type: Literal['constant', 'front'] = 'front',
             lighting_space: Literal['camera', 'world'] = 'camera',
         ):
@@ -27,6 +28,7 @@ class NVDiffRenderer(torch.nn.Module):
         self.lighting_type = lighting_type
         self.lighting_space = lighting_space
         self.glctx = dr.RasterizeGLContext() if use_opengl else dr.RasterizeCudaContext()
+        # print("success init")
 
     def mvp_from_camera_param(self, RT, K, image_size):
         # projection matrix

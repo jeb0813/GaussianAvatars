@@ -1,4 +1,5 @@
 source activate gaussian-avatars
+conda deactivate
 
 git clone https://github.com/ShenhanQian/GaussianAvatars.git --recursive
 
@@ -21,3 +22,12 @@ conda install pytorch torchvision pytorch-cuda=11.6 -c pytorch -c nvidia
 
 # Install the rest pacakges (can take a while to compile diff-gaussian-rasterization, simple-knn, and nvdiffrast)
 pip install -r requirements.txt
+
+# hipconfig error
+https://github.com/microsoft/DeepSpeed/issues/3814#issuecomment-1764849256
+
+
+CUDA_VISIBLE_DEVICES=3 bash train.sh
+
+Optimizing output/UNION10EMOEXP_306_eval_600k
+Output folder: output/UNION10EMOEXP_306_eval_600k [23/03 19:39:08]

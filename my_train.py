@@ -33,11 +33,12 @@ except ImportError:
     TENSORBOARD_FOUND = False
 
 def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from):
+    # ipdb.set_trace()
     first_iter = 0
     tb_writer = prepare_output_and_logger(dataset)
     if dataset.bind_to_mesh:
         gaussians = FlameGaussianModel(dataset.sh_degree, dataset.disable_flame_static_offset, dataset.not_finetune_flame_params)
-        mesh_renderer = NVDiffRenderer()
+        # mesh_renderer = NVDiffRenderer()
     else:
         gaussians = GaussianModel(dataset.sh_degree)
     scene = Scene(dataset, gaussians)
@@ -45,6 +46,8 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     if checkpoint:
         (model_params, first_iter) = torch.load(checkpoint)
         gaussians.restore(model_params, opt)
+
+    # print("here")
 
     bg_color = [1, 1, 1] if dataset.white_background else [0, 0, 0]
     background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
@@ -58,48 +61,51 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
     ema_loss_for_log = 0.0
     progress_bar = tqdm(range(first_iter, opt.iterations), desc="Training progress")
     first_iter += 1
+
+    # print("here")
+
     for iteration in range(first_iter, opt.iterations + 1):        
-        if network_gui.conn == None:
-            network_gui.try_connect()
-        while network_gui.conn != None:
-            try:
-                # receive data
-                net_image = None
-                # custom_cam, do_training, pipe.convert_SHs_python, pipe.compute_cov3D_python, keep_alive, scaling_modifer, use_original_mesh = network_gui.receive()
-                custom_cam, msg = network_gui.receive()
+        # if network_gui.conn == None:
+        #     network_gui.try_connect()
+        # while network_gui.conn != None:
+        #     try:
+        #         # receive data
+        #         net_image = None
+        #         # custom_cam, do_training, pipe.convert_SHs_python, pipe.compute_cov3D_python, keep_alive, scaling_modifer, use_original_mesh = network_gui.receive()
+        #         custom_cam, msg = network_gui.receive()
 
-                # render
-                if custom_cam != None:
-                    # mesh selection by timestep
-                    if gaussians.binding != None:
-                        gaussians.select_mesh_by_timestep(custom_cam.timestep, msg['use_original_mesh'])
+        #         # render
+        #         if custom_cam != None:
+        #             # mesh selection by timestep
+        #             if gaussians.binding != None:
+        #                 gaussians.select_mesh_by_timestep(custom_cam.timestep, msg['use_original_mesh'])
                     
-                    # gaussian splatting rendering
-                    if msg['show_splatting']:
-                        net_image = render(custom_cam, gaussians, pipe, background, msg['scaling_modifier'])["render"]
+        #             # gaussian splatting rendering
+        #             if msg['show_splatting']:
+        #                 net_image = render(custom_cam, gaussians, pipe, background, msg['scaling_modifier'])["render"]
                     
-                    # mesh rendering
-                    if gaussians.binding != None and msg['show_mesh']:
-                        out_dict = mesh_renderer.render_from_camera(gaussians.verts, gaussians.faces, custom_cam)
+        #             # mesh rendering
+        #             if gaussians.binding != None and msg['show_mesh']:
+        #                 out_dict = mesh_renderer.render_from_camera(gaussians.verts, gaussians.faces, custom_cam)
 
-                        rgba_mesh = out_dict['rgba'].squeeze(0).permute(2, 0, 1)  # (C, W, H)
-                        rgb_mesh = rgba_mesh[:3, :, :]
-                        alpha_mesh = rgba_mesh[3:, :, :]
+        #                 rgba_mesh = out_dict['rgba'].squeeze(0).permute(2, 0, 1)  # (C, W, H)
+        #                 rgb_mesh = rgba_mesh[:3, :, :]
+        #                 alpha_mesh = rgba_mesh[3:, :, :]
 
-                        mesh_opacity = msg['mesh_opacity']
-                        if net_image is None:
-                            net_image = rgb_mesh
-                        else:
-                            net_image = rgb_mesh * alpha_mesh * mesh_opacity  + net_image * (alpha_mesh * (1 - mesh_opacity) + (1 - alpha_mesh))
+        #                 mesh_opacity = msg['mesh_opacity']
+        #                 if net_image is None:
+        #                     net_image = rgb_mesh
+        #                 else:
+        #                     net_image = rgb_mesh * alpha_mesh * mesh_opacity  + net_image * (alpha_mesh * (1 - mesh_opacity) + (1 - alpha_mesh))
 
-                    # send data
-                    net_dict = {'num_timesteps': gaussians.num_timesteps, 'num_points': gaussians._xyz.shape[0]}
-                    network_gui.send(net_image, net_dict)
-                if msg['do_training'] and ((iteration < int(opt.iterations)) or not msg['keep_alive']):
-                    break
-            except Exception as e:
-                # print(e)
-                network_gui.conn = None
+        #             # send data
+        #             net_dict = {'num_timesteps': gaussians.num_timesteps, 'num_points': gaussians._xyz.shape[0]}
+        #             network_gui.send(net_image, net_dict)
+        #         if msg['do_training'] and ((iteration < int(opt.iterations)) or not msg['keep_alive']):
+        #             break
+        #     except Exception as e:
+        #         # print(e)
+        #         network_gui.conn = None
 
         iter_start.record()
 
@@ -315,7 +321,7 @@ def training_report(tb_writer, iteration, losses, elapsed, testing_iterations, s
 
 if __name__ == "__main__":
     import ipdb
-    ipdb.set_trace()
+    # ipdb.set_trace()
 
 
     # Set up command line argument parser
@@ -343,12 +349,16 @@ if __name__ == "__main__":
     
     print("Optimizing " + args.model_path)
 
+    # ipdb.set_trace()
+
     # Initialize system state (RNG)
     safe_state(args.quiet)
 
     # Start GUI server, configure and run training
-    network_gui.init(args.ip, args.port)
+    # network_gui.init(args.ip, args.port)
+
     torch.autograd.set_detect_anomaly(args.detect_anomaly)
+    
     training(lp.extract(args), op.extract(args), pp.extract(args), args.test_iterations, args.save_iterations, args.checkpoint_iterations, args.start_checkpoint, args.debug_from)
 
     # All done

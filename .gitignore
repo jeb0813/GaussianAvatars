@@ -140,3 +140,9 @@ dmypy.json
 
 # meta data in macOS
 .DS_Store
+
+
+/nvdiffrast/
+/data/
+flame_model/assets/flame/flame2023.pkl
+flame_model/assets/flame/FLAME_masks.pkl
