@@ -340,6 +340,27 @@ if __name__ == "__main__":
     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])
     parser.add_argument("--start_checkpoint", type=str, default = None)
     args = parser.parse_args(sys.argv[1:])
+
+    # Namespace(sh_degree=3, 
+    # source_path='/data/chenziang/codes/GaussianAvatars/data/074/cluster/ikarus/sqian/project/dynamic-head-avatars/code/multi-view-head-tracker/export/UNION10_074_EMO1234EXP234589_v16_DS2-0.5x_lmkSTAR_teethV3_SMOOTH_offsetS_whiteBg_maskBelowLine', 
+    # target_path='', model_path='output/UNION10EMOEXP__eval_600k', 
+    # images='images', resolution=-1, 
+    # white_background=True, data_device='cuda', 
+    # eval=True, bind_to_mesh=True, isable_flame_static_offset=False, 
+    # not_finetune_flame_params=False, select_camera_id=-1, iterations=600000, 
+    # position_lr_init=0.005, position_lr_final=5e-05, position_lr_delay_mult=0.01, 
+    # position_lr_max_steps=600000, feature_lr=0.0025, opacity_lr=0.05, scaling_lr=0.017, 
+    # rotation_lr=0.001, densification_interval=2000, opacity_reset_interval=60000, 
+    # densify_from_iter=10000, densify_until_iter=600000, densify_grad_threshold=0.0002, 
+    # flame_expr_lr=0.001, flame_trans_lr=1e-06, flame_pose_lr=1e-05, percent_dense=0.01, 
+    # lambda_dssim=0.2, lambda_xyz=0.01, threshold_xyz=1.0, metric_xyz=False, 
+    # lambda_scale=1.0, threshold_scale=0.6, metric_scale=False, lambda_dynamic_offset=0.0, 
+    # lambda_laplacian=0.0, lambda_dynamic_offset_std=0, convert_SHs_python=False, 
+    # compute_cov3D_python=False, debug=False, ip='127.0.0.1', port=60000, debug_from=-1, 
+    # detect_anomaly=False, interval=60000, test_iterations=[], save_iterations=[], 
+    # quiet=False, checkpoint_iterations=[], start_checkpoint=None)
+
+
     if len(args.test_iterations) == 0:
         args.test_iterations.extend(list(range(args.interval, args.iterations, args.interval)) + [args.iterations])
     if len(args.save_iterations) == 0:

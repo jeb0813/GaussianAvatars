@@ -52,6 +52,10 @@ class SceneInfo(NamedTuple):
     tgt_test_meshes: Optional[dict]
 
 def getNerfppNorm(cam_info):
+    """
+    获取所有相机的球体中心和半径
+    返回平移矩阵和半径
+    """
     def get_center_and_diag(cam_centers):
         cam_centers = np.hstack(cam_centers)
         avg_cam_center = np.mean(cam_centers, axis=1, keepdims=True)
@@ -186,6 +190,10 @@ def readColmapSceneInfo(path, images, eval, llffhold=8):
     return scene_info
 
 def readCamerasFromTransforms(path, transformsfile, white_background, extension=".png"):
+    """
+    从json文件中读取每一帧的所有信息
+    返回CameraInfo
+    """
     cam_infos = []
 
     with open(os.path.join(path, transformsfile)) as json_file:
@@ -277,6 +285,10 @@ def readNerfSyntheticInfo(path, white_background, eval, extension=".png"):
     return scene_info
 
 def readMeshesFromTransforms(path, transformsfile):
+    """
+    从json中获取每一帧的mesh路径
+    返回{timestep_index: flame_param}字典
+    """
     with open(os.path.join(path, transformsfile)) as json_file:
         contents = json.load(json_file)
         frames = contents["frames"]
@@ -291,6 +303,10 @@ def readMeshesFromTransforms(path, transformsfile):
     return mesh_infos
 
 def readDynamicNerfInfo(path, white_background, eval, extension=".png", target_path=""):
+    """
+    获取数据集每一帧的数据和场景参数
+    """
+    # 加载训练集
     print("Reading Training Transforms")
     if target_path != "":
         train_cam_infos = readCamerasFromTransforms(target_path, "transforms_train.json", white_background, extension)
@@ -305,12 +321,15 @@ def readDynamicNerfInfo(path, white_background, eval, extension=".png", target_p
     else:
         tgt_train_mesh_infos = {}
     
+    # 加载验证集
+    # 为什么验证集不需要mesh信息？
     print("Reading Validation Transforms")
     if target_path != "":
         val_cam_infos = readCamerasFromTransforms(target_path, "transforms_val.json", white_background, extension)
     else:
         val_cam_infos = readCamerasFromTransforms(path, "transforms_val.json", white_background, extension)
     
+    # 加载测试集
     print("Reading Test Transforms")
     if target_path != "":
         test_cam_infos = readCamerasFromTransforms(target_path, "transforms_test.json", white_background, extension)

@@ -31,3 +31,8 @@ CUDA_VISIBLE_DEVICES=3 bash train.sh
 
 Optimizing output/UNION10EMOEXP_306_eval_600k
 Output folder: output/UNION10EMOEXP_306_eval_600k [23/03 19:39:08]
+
+
+
+CUDA_VISIBLE_DEVICES=2 bash train_gpu2.sh
+CUDA_VISIBLE_DEVICES=3 bash train_gpu3.sh

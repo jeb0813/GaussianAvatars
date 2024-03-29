@@ -97,11 +97,14 @@ class Scene:
         else:
             assert False, "Could not recognize scene type!"
 
+        # print(scene_info)
+        # exit()
         # process cameras
         self.train_cameras = {}
         self.val_cameras = {}
         self.test_cameras = {}
         
+        # True if self.loaded_iter is None (default)
         if not self.loaded_iter:
             if gaussians.binding == None:
                 with open(scene_info.ply_path, 'rb') as src_file, open(os.path.join(self.model_path, "input.ply") , 'wb') as dest_file:
