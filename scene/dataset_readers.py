@@ -206,6 +206,7 @@ def readCamerasFromTransforms(path, transformsfile, white_background, extension=
             file_path = frame["file_path"]
             if extension not in frame["file_path"]:
                 file_path += extension
+            # 完整路径
             cam_name = os.path.join(path, file_path)
 
             # NeRF 'transform_matrix' is a camera-to-world transform
@@ -312,7 +313,7 @@ def readDynamicNerfInfo(path, white_background, eval, extension=".png", target_p
         train_cam_infos = readCamerasFromTransforms(target_path, "transforms_train.json", white_background, extension)
     else:
         train_cam_infos = readCamerasFromTransforms(path, "transforms_train.json", white_background, extension)
-    
+
     print("Reading Training Meshes")
     train_mesh_infos = readMeshesFromTransforms(path, "transforms_train.json")
     if target_path != "":

@@ -124,6 +124,7 @@ class Scene:
             random.shuffle(scene_info.val_cameras)  # Multi-res consistent random shuffling
             random.shuffle(scene_info.test_cameras)  # Multi-res consistent random shuffling
 
+        # 获取场景的半径和中心点
         self.cameras_extent = scene_info.nerf_normalization["radius"]
 
         for resolution_scale in resolution_scales:

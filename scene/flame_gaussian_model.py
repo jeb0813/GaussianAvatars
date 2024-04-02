@@ -217,6 +217,10 @@ class FlameGaussianModel(GaussianModel):
         # self.optimizer.add_param_group(param_dynamic_offset)
 
     def save_ply(self, path):
+        """
+        继承了父类，负责保存ply
+        实现了保存flame参数的功能
+        """
         super().save_ply(path)
 
         npz_path = Path(path).parent / "flame_param.npz"

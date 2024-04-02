@@ -41,6 +41,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         # mesh_renderer = NVDiffRenderer()
     else:
         gaussians = GaussianModel(dataset.sh_degree)
+
+    # scene是实际上的数据集
+    
     scene = Scene(dataset, gaussians)
     gaussians.training_setup(opt)
     if checkpoint:
@@ -127,6 +130,9 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         # Render
         if (iteration - 1) == debug_from:
             pipe.debug = True
+
+        # 渲染的pipeline
+        # 返回 "render" "viewspace_points" "visibility_filter" "radii"
         render_pkg = render(viewpoint_cam, gaussians, pipe, background)
         image, viewspace_point_tensor, visibility_filter, radii = render_pkg["render"], render_pkg["viewspace_points"], render_pkg["visibility_filter"], render_pkg["radii"]
 
@@ -137,6 +143,7 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
         losses['l1'] = l1_loss(image, gt_image) * (1.0 - opt.lambda_dssim)
         losses['ssim'] = (1.0 - ssim(image, gt_image)) * opt.lambda_dssim
 
+        # 还是loss
         if gaussians.binding != None:
             if opt.metric_xyz:
                 losses['xyz'] = F.relu((gaussians._xyz*gaussians.face_scaling[gaussians.binding])[visibility_filter] - opt.threshold_xyz).norm(dim=1).mean() * opt.lambda_xyz
@@ -196,7 +203,10 @@ def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoi
             if (iteration in saving_iterations):
                 print("[ITER {}] Saving Gaussians".format(iteration))
                 scene.save(iteration)
-
+            
+            """
+            important
+            """
             # Densification
             if iteration < opt.densify_until_iter:
                 # Keep track of max radii in image-space for pruning
