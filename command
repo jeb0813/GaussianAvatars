@@ -36,6 +36,7 @@ Output folder: output/UNION10EMOEXP_306_eval_600k [23/03 19:39:08]
 
 CUDA_VISIBLE_DEVICES=2 bash train_gpu2.sh
 CUDA_VISIBLE_DEVICES=3 bash train_gpu3.sh
+CUDA_VISIBLE_DEVICES=3 python my_train.py -s /data/chenziang/codes/GaussianAvatars/data/074/cluster/ikarus/sqian/project/dynamic-head-avatars/code/multi-view-head-tracker/export/UNION10_074_EMO1234EXP234589_v16_DS2-0.5x_lmkSTAR_teethV3_SMOOTH_offsetS_whiteBg_maskBelowLine -m /data/chenziang/codes/GaussianAvatars/output/UNION10EMOEXP_074_eval_600k --port 60000 --eval --white_background --bind_to_mesh
 
 CUDA_VISIBLE_DEVICES=2 python my_train.py \
 -s /data/chenziang/codes/GaussianAvatars/data/074/cluster/ikarus/sqian/project/dynamic-head-avatars/code/multi-view-head-tracker/export/UNION10_074_EMO1234EXP234589_v16_DS2-0.5x_lmkSTAR_teethV3_SMOOTH_offsetS_whiteBg_maskBelowLine \
