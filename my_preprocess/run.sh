@@ -38,7 +38,7 @@ mask_path="/fg_masks"
 # # run mtracker
 # python MICA_helper.py --subject_path=$subject_path --opt="mtracker"
 
-# # cp and rename
+# cp and rename
 # python MICA_helper.py --subject_path=$subject_path --opt="cp"
 
 # source deactivate

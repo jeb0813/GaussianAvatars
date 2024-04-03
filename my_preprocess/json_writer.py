@@ -246,6 +246,204 @@ def write_trial(trial_path,cam_metadata_path):
         json.dump(data, f)
     
 
+def write_union_trainval(trainval_trials,union_path,subject_path):
+    global cnt
+    union_train_json_path=os.path.join(union_path,"transforms_train.json")
+    union_val_json_path=os.path.join(union_path,"transforms_val.json")
+
+    with open(union_train_json_path, 'w') as f:
+        json.dump({
+            "cx": 274.83734130859375,
+            "cy": 400.87847900390625,
+            "fl_x": 2048.657958984375,
+            "fl_y": 2048.683349609375,
+            "h": 802,
+            "w": 550,
+            "camera_angle_x": 0.26687315349380775,
+            "camera_angle_y": 0.3865834169367763,
+            "camera_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+            ]
+        }, f)
+    
+    with open(union_val_json_path, 'w') as f:
+        json.dump({
+            "cx": 274.83734130859375,
+            "cy": 400.87847900390625,
+            "fl_x": 2048.657958984375,
+            "fl_y": 2048.683349609375,
+            "h": 802,
+            "w": 550,
+            "camera_angle_x": 0.26687315349380775,
+            "camera_angle_y": 0.3865834169367763,
+            "camera_indices": [
+                8
+            ]
+        }, f)
+
+    for trial in trainval_trials:
+        trial_path=os.path.join(subject_path,trial)
+        train_json_path=os.path.join(trial_path,"transforms_train.json")
+        val_json_path=os.path.join(trial_path,"transforms_val.json")
+
+
+        with open(train_json_path, 'r') as f:
+            data = json.load(f)
+        train_frames=data["frames"]
+        train_timestep_indices=data["timestep_indices"]
+
+        with open(val_json_path, 'r') as f:
+            data = json.load(f)
+        val_frames=data["frames"]
+        val_timestep_indices=data["timestep_indices"]
+
+        assert len(train_timestep_indices)==len(val_timestep_indices)
+        n=len(train_timestep_indices)
+
+        # time_indices 要根据cnt做偏移
+        train_timestep_indices=[i+cnt for i in train_timestep_indices]
+        val_timestep_indices=[i+cnt for i in val_timestep_indices]
+
+        # frames的timestep_index也要做偏移
+        # frames的file_path和flame_param_path要补全到绝对路径
+
+        for frame in train_frames:
+            frame["timestep_index"]+=cnt
+            frame["file_path"]=os.path.join(trial_path,frame["file_path"])
+            frame["flame_param_path"]=os.path.join(trial_path,frame["flame_param_path"])
+        
+        for frame in val_frames:
+            frame["timestep_index"]+=cnt
+            frame["file_path"]=os.path.join(trial_path,frame["file_path"])
+            frame["flame_param_path"]=os.path.join(trial_path,frame["flame_param_path"])
+        
+        cnt+=n
+
+        # 写入union的json
+        with open(union_train_json_path, 'r') as f:
+            data = json.load(f)
+        # 先判断是否存在frames字段
+        if "frames" in data:
+            data["frames"].extend(train_frames)
+        else:
+            data["frames"]=train_frames
+        # 再判断是否存在timestep_indices字段
+        if "timestep_indices" in data:
+            data["timestep_indices"].extend(train_timestep_indices)
+        else:
+            data["timestep_indices"]=train_timestep_indices
+        with open(union_train_json_path, 'w') as f:
+            json.dump(data, f)
+        
+        with open(union_val_json_path, 'r') as f:
+            data = json.load(f)
+        # 先判断是否存在frames字段
+        if "frames" in data:
+            data["frames"].extend(val_frames)
+        else:
+            data["frames"]=val_frames
+        # 再判断是否存在timestep_indices字段
+        if "timestep_indices" in data:
+            data["timestep_indices"].extend(val_timestep_indices)
+        else:
+            data["timestep_indices"]=val_timestep_indices
+        with open(union_val_json_path, 'w') as f:
+            json.dump(data, f)
+
+
+def write_union_test(test_trials,union_path,subject_path):
+    global cnt
+    union_test_json_path=os.path.join(union_path,"transforms_test.json")
+    # 先写入固定的部分
+    with open(union_test_json_path, 'w') as f:
+        json.dump({
+            "cx": 274.83734130859375,
+            "cy": 400.87847900390625,
+            "fl_x": 2048.657958984375,
+            "fl_y": 2048.683349609375,
+            "h": 802,
+            "w": 550,
+            "camera_angle_x": 0.26687315349380775,
+            "camera_angle_y": 0.3865834169367763,
+            "camera_indices": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+            ]
+        }, f)
+    
+    for trial in test_trials:
+        trial_path=os.path.join(subject_path,trial)
+        test_json_path=os.path.join(trial_path,"transforms_test.json")
+
+        with open(test_json_path, 'r') as f:
+            data = json.load(f)
+        test_frames=data["frames"]
+        test_timestep_indices=data["timestep_indices"]
+
+        n=len(test_timestep_indices)
+
+        # 这里的indice不是从0开始的，再做一次shift
+        shift=test_timestep_indices[0]
+        # time_indices 要根据cnt做偏移
+        test_timestep_indices=[i+cnt-shift for i in test_timestep_indices]
+
+        # frames的timestep_index也要做偏移
+        # frames的file_path和flame_param_path要补全到绝对路径
+
+        for frame in test_frames:
+            frame["timestep_index"]+=(cnt-shift)
+            frame["file_path"]=os.path.join(trial_path,frame["file_path"])
+            frame["flame_param_path"]=os.path.join(trial_path,frame["flame_param_path"])
+
+        cnt+=n
+
+        # 写入union的json
+        with open(union_test_json_path, 'r') as f:
+            data = json.load(f)
+        # 先判断是否存在frames字段
+        if "frames" in data:
+            data["frames"].extend(test_frames)
+        else:
+            data["frames"]=test_frames
+
+        # 再判断是否存在timestep_indices字段
+        if "timestep_indices" in data:
+            data["timestep_indices"].extend(test_timestep_indices)
+        else:
+            data["timestep_indices"]=test_timestep_indices
+        with open(union_test_json_path, 'w') as f:
+            json.dump(data, f)
+        
+    
+
 
 
 
@@ -258,9 +456,37 @@ if __name__ == '__main__':
     cam_metadata_path="/data/chenziang/codes/GaussianAvatars/data/my_074/camera_params.json"
     trial_paths=os.listdir(subject_path)
 
+
+    # 这里实际应该写入所有的数据，不需要划分，但是不想改了
     for trial in trial_paths:
         if not (trial.startswith("EMO") or trial.startswith("EXP")):
             continue
         print(trial)
         write_trial(os.path.join(subject_path,trial),cam_metadata_path)
         # exit()
+
+    # 写入Union的json
+    # train中是除了trial的除了08的所有camera
+    # test中是trial的所有camera
+    # val中是除了trial的camera 08
+    
+    # 先读txt
+    Union_path=os.path.join(subject_path,"Union_074")
+    test_txt_path=os.path.join(Union_path,"sequences_test.txt")
+    trainval_txt_path=os.path.join(Union_path,"sequences_trainval.txt")
+
+    
+    cnt=0
+
+    with open(trainval_txt_path,"r") as f:
+        trainval_trials=f.readlines()
+        trainval_trials=[trial.strip() for trial in trainval_trials]
+    
+
+    with open(test_txt_path,"r") as f:
+        test_trials=f.readlines()
+        test_trials=[trial.strip() for trial in test_trials]
+    
+    write_union_trainval(trainval_trials,Union_path,subject_path)
+    write_union_test(test_trials,Union_path,subject_path)
+    

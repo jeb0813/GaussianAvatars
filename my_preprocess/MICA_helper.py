@@ -92,6 +92,10 @@ def cp(subject_path,path):
             os.makedirs(ply_path)
 
         ori_path=os.path.join("/data/chenziang/codes/metrical-tracker/output",trial[:5]+"_cam_222200037","mesh")
+        canonical_path=os.path.join("/data/chenziang/codes/metrical-tracker/output",trial[:5]+"_cam_222200037","canonical.obj")
+        cmd=f"cp {canonical_path} {os.path.join(subject_path,trial,'canonical_flame_param.obj')}"
+        os.system(cmd)
+
         for file in os.listdir(ori_path):
             if file.endswith(".ply"):
                 # 五位数字文件名变四位数字，去掉一个前导0
