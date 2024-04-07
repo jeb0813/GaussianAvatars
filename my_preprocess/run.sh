@@ -50,3 +50,11 @@ source activate gaussian-avatars
 python json_writer.py --subject_path=$subject_path
 
 source deactivate
+
+
+# step5: convert ply to npz
+# 搞不明白这个追踪和重建的坐标系啊
+source deactivate
+source activate mtracker
+python ply2npz.py --subject_path=$subject_path
+source deactivate
