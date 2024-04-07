@@ -314,8 +314,8 @@ def training_report(tb_writer, iteration, losses, elapsed, testing_iterations, s
         torch.cuda.empty_cache()
 
 if __name__ == "__main__":
-    import ipdb
-    ipdb.set_trace()
+    # import ipdb
+    # ipdb.set_trace()
 
 
     # Set up command line argument parser
