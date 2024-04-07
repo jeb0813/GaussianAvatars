@@ -1,0 +1,17 @@
+conda create --name gaussian-avatars -y python=3.10
+conda activate gaussian-avatars
+conda install -c "nvidia/label/cuda-12.1.1" cuda-toolkit ninja  # use the right CUDA version
+
+conda env config vars set CUDA_PATH="$env:CONDA_PREFIX"  
+
+
+conda env config vars set PATH="$env:CONDA_PREFIX\Script;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\bin\Hostx64\x64;$env:PATH"
+
+conda env config vars set PATH="%CONDA_PREFIX%\Script;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\bin\Hostx64\x64;%PATH%"
+
+echo %PATH%
+
+conda deactivate
+
+
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
