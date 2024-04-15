@@ -28,14 +28,14 @@ def bg_remove(video_path,img_path):
     cmd = "CUDA_VISIBLE_DEVICES=3 python /data/chenziang/codes/SplattingAvatar/preprocess/IMavatar/preprocess/submodules/RobustVideoMatting/segmentation_api.py --input {video_path} --output {img_path}".format(video_path=video_path, img_path=img_path)
     os.system(cmd)
 
-def rename_and_change_bg(input_path,output_path, bg_color="white"):
+def rename_and_change_bg(input_path,output_path, cam_id,bg_color="white"):
     # input_path: path of the image
     # output_path: path to save the image
     # bg_color: background color
     imgs=os.listdir(input_path)
     for img in imgs:
         img_path=os.path.join(input_path,img)
-        new_image_path=os.path.join(output_path,img)
+        new_image_path=os.path.join(output_path,img.split(".")[0]+"_"+cam_id+".png")
         # 打开图像
         image = Image.open(img_path)
         # 创建一个白色背景的新图像
@@ -80,18 +80,14 @@ if __name__=="__main__":
     args=get_args()
     subject_path=args.subject_path
 
-    for vid in os.listdir(subject_path):
-        if not vid.endswith(".mp4"):
+    # EMO1234EXP234589
+    trial_path=os.listdir(subject_path)
+    for trial in trial_path:
+        if not (trial.startswith("EMO") or trial.startswith("EXP")):
             continue
-        vid_path=os.path.join(subject_path,vid)
+        print(trial)
+        trial_path=os.path.join(subject_path,trial)
+        trial_handler(trial_path)
 
-        img_path=os.path.join(subject_path,"bg_removed")
-        if not os.path.exists(img_path):
-            os.mkdir(img_path)
-        
-        out_path=os.path.join(subject_path,"images_raw")
-        if not os.path.exists(out_path):
-            os.mkdir(out_path)
 
-        # bg_remove(vid_path,img_path)
-        rename_and_change_bg(img_path,out_path)
+    # rename_and_change_bg("/data/chenziang/codes/GaussianAvatars/data/my_074/EXP-2-eyes/temp","00")
